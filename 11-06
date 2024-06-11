@@ -1,0 +1,29 @@
+from tkinter import *
+
+MSG1 = ""
+MSG2 = ""
+MSG3 = ""
+MSG4 = ""
+
+QUESTIONS = [
+    1,"","1","2","3","4"
+]
+
+x=0
+y=0
+
+def MAIN():
+    main=Tk()
+
+    main.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    main.overrideredirect(True)
+    main.resizable(False,False)
+    main.configure(bg="#e69138")
+    
+    header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
+    header1.place(x=135 ,y=50)
+
+    introduction = Label(main, text="")
+
+    main.mainloop()
+MAIN()

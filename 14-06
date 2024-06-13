@@ -1,0 +1,58 @@
+from tkinter import *
+from tkinter import messagebox
+
+MSG1 = ""
+MSG2 = ""
+MSG3 = ""
+MSG4 = ""
+
+QUESTIONS = [
+    1,"","1","2","3","4"
+]
+
+x=0
+y=0
+
+def MAIN():
+    main=Tk()
+
+    main.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    main.overrideredirect(True)
+    main.resizable(False,False)
+    main.configure(bg="#e69138")
+    main.config(cursor="heart")
+    
+    header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
+    header1.place(x=135 ,y=50)
+
+    introduction = Label(main,bg="#ffe599",font=("Merriweather", 27), text=
+     "This quiz is about \n science. There are ten \n questuins inlcuding \n multi choice and \n true/false questions.\n You will have three \n opurtunities to skip \n questino if you wish.")
+    introduction.place(x=95.5,y=138)
+
+    BEGIN = Button(main, text="Begin", bg="#660000",fg="white", command= lambda:Q_LOOP(main), font=("Merriweather", 20), padx=112.849426)
+    BEGIN.place(x=126.5,y=521)
+
+    main.mainloop()
+
+def Q_LOOP(main):
+    main.destroy()
+    LCV = 0
+    SCORE = 0
+    SKIPS = 0
+
+    while LCV == 10:
+        RESULTS()
+    else: 
+        QUESTION()
+
+def QUESTION():
+    question_win = Tk()
+    
+    question_win.geometry("%dx%d+%d+%d" % (570, 785, 675, 127.5))
+    question_win.overrideredirect(True)
+    question_win.config(bg="#e69138")
+    question_win.config(cursor="arrow")
+
+def RESULTS():
+    RESULTS_WIN = Tk()
+MAIN()

@@ -1,0 +1,124 @@
+from tkinter import *
+from tkinter import messagebox
+import random
+import pyglet
+
+pyglet.font.add_file('Merriweather-Italic.ttf')
+pyglet.font.add_file("Pacifico.ttf")
+
+MSGD = ""
+MSG1 = ""
+MSG2 = ""
+MSG3 = ""
+MSG4 = ""
+
+QUESTIONS = [
+    [1,1,"How many active volcanoes are on land","1500","10000","140000","6400"],
+    [2,2,"You can see arteries through the skin", "True", "False"],
+    [3,3, "one  two three four five six seven eight nine ten eleven twelve thirteen fourteen", "1", "2", "3", "4"]
+]
+
+
+x=0
+y=0
+
+random.shuffle(QUESTIONS)
+
+def MAIN():
+    main=Tk()
+
+    main.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    main.overrideredirect(True)
+    main.resizable(False,False)
+    main.configure(bg="#e69138")
+    main.config(cursor="heart")
+    
+    header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
+    header1.place(x=135 ,y=50)
+
+    introduction = Label(main,bg="#ffe599",font=("Merriweather", 27), text=
+     "This quiz is about \n science. There are ten \n questuins inlcuding \n multi choice and \n true/false questions.\n You will have three \n opurtunities to skip \n questino if you wish.")
+    introduction.place(x=95.5,y=138)
+
+    BEGIN = Button(main, text="Begin", bg="#660000",fg="white", command= lambda:Q_LOOP(main), font=("Merriweather", 20), padx=112.849426)
+    BEGIN.place(x=126.5,y=521)
+
+    main.mainloop()
+
+def Q_LOOP(main):
+    main.destroy()
+    global qlist
+    qlist = QUESTIONS[0]
+    QUESTIONS.remove(qlist)
+    print(qlist)
+    print(QUESTIONS)
+    
+    LCV = 0
+    while LCV == 10:
+        RESULTS()
+    else: 
+        QUESTION()
+        LCV = LCV + 1
+
+def QUESTION():
+    question_win = Tk()
+    
+    question_win.geometry("%dx%d+%d+%d" % (570, 785, 675, 127.5))
+    question_win.overrideredirect(True)
+    question_win.config(bg="#e69138")
+    question_win.config(cursor="arrow")
+
+    STRVAR = StringVar()
+
+    ANSWER = "Answer Selector"
+    if len(qlist) == 5:
+        OPTIONS = [(qlist[3]), (qlist[4])]
+    else:
+        OPTIONS = [(qlist[3]), (qlist[4]), (qlist[5]), (qlist[6])]
+
+    print(qlist[5])
+    header2 = Label(question_win, text="Question"+str(LCV), bg="#ffe599", padx=85.1962865, font=("Merriweather", 20))
+    header2.place(x=135 ,y=50)
+    questionbox = Canvas(question_win, bg="#ffe599", height=333, width=422)
+    questionbox.place(y=136,x=74)
+    QHEADER = Label(questionbox, text=str(qlist[2]), font=("Merriweather, 20"), wraplength=422)
+    QHEADER.place(relx=0.5, rely=0.5, anchor=CENTER)
+    drop = OptionMenu(question_win, ANSWER, *OPTIONS)
+    drop.place(x=100,y=400)
+    dropbutton = Button(question_win, text="submit", command= lambda:SUBMIT(ANSWER))
+    dropbutton.place(x=100, y=500)
+
+def SUBMIT(ANSWER):
+    CHECKVALUE = int(qlist[1])
+    CORRECT_ANS = qlist[CHECKVALUE]
+    if ANSWER == CORRECT_ANS:
+        print("CORRECT")
+    return
+
+def RESULTS():
+
+    CALC_RESULTS()
+
+    RESULTS_WIN = Tk()
+    RESULTS_WIN.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    RESULTS_WIN.overrideredirect(True)
+    RESULTS_WIN.resizable(False,False)
+    RESULTS_WIN.configure(bg="#e69138")
+    RESULTS_WIN.config(cursor="heart")
+
+    MESSAGELABEL = Label(RESULTS_WIN, text=MSGD)
+
+def CALC_RESULTS():
+    print("to be done")
+    MSGD = ""
+RUN_PRG = 1
+while RUN_PRG == 1:
+    print("STARTED")
+    LCV = 1
+    SCORE = 0
+    SKIPS = 0
+    global QUESTION_CTRL
+    QUESTION_CTRL = 0
+    MAIN()
+    print("DONE")
+    RUN_PRG = 0

@@ -1,0 +1,182 @@
+from tkinter import *
+from tkinter import messagebox
+import random
+import pyglet
+
+#pyglet.font.add_file('Merriweather-Italic.ttf')
+#pyglet.font.add_file("Pacifico.ttf")
+
+global SCORE
+SCORE = 0
+
+MSGD = ""
+MSG1 = ""
+MSG2 = ""
+MSG3 = ""
+MSG4 = ""
+
+QUESTIONS = [
+    [1,1,"How many active volcanoes are on land","1500","10000","140000","6400"],
+    [2,2,"You can see arteries through the skin", "True", "False"],
+    [3,2,"A tsunami is just a really big wave", "True", "False"],
+    [4,4, "Which cycle the powers the ocean currents, weather and tectonic plate movement","Gravity (from the sun)", "conduction current", "condition cycle", "convection currents"],
+    [5,3,"Which circuit pumps blood from the heart, to the lungs, and back to the heart","systemic circuit", "cardiac circuit", "pulmonary circuit", "vascular circuit"],
+    [6,2,"What is the main cause of tsunamis", "Volcanic eruption", "Earthquake under the sea", "Hurricane", "Gravity (from sun and moon)"],
+    [7,3,"Which natural disaster is often predicted by meteorologists using radar and satellite imagery", "Earthquake", "Volcano", "Tornado", "Flood"] ,
+    [8,3,"Which chamber of the heart has the thickest wall", "Left atrium", "Right atrium", "Left ventricle", "right ventricle"],
+    [9,3,"What is the primary difference between a hurricane and a typhoon", "Their wind speed", "The temperature of the water they form over", "Their location", 
+     "The amount of rainfall they produce"],
+    [10,4,"Which of the following can trigger a landslide", "Heavy rainfall", "Earthquake", "Volcanic eruption", "All of the above"],
+    [11,3,"Which of the following is untrue about the heart's functions", "Keeps blood flowing in one direction", "Circulates blood based on the needs of the body",
+     "Mixes oxygen-poor and oxygen-rich blood", "Creates blood pressure"]
+
+]
+
+
+x=0
+y=0
+
+random.shuffle(QUESTIONS)
+
+def MAIN(question_win):
+    main=Tk()
+
+    main.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    #main.overrideredirect(True)
+    main.resizable(False,False)
+    main.configure(bg="#e69138")
+    main.config(cursor="heart")
+    
+    header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
+    header1.place(x=135 ,y=50)
+
+    introduction = Label(main,bg="#ffe599",font=("Merriweather", 27), text=
+     "This quiz is about \n science. There are ten \n questuins inlcuding \n multi choice and \n true/false questions.\n You will have three \n opurtunities to skip \n questino if you wish.")
+    introduction.place(x=95.5,y=138)
+
+    BEGIN = Button(main, text="Begin", bg="#660000",fg="white", command= lambda:START(main, question_win), font=("Merriweather", 20), padx=112.849426)
+    BEGIN.place(x=126.5,y=521)
+
+    main.mainloop()
+
+def START(main, question_win):
+    main.destroy()
+    global qlist
+    qlist = QUESTIONS[0]
+    QUESTIONS.remove(qlist)
+    print(qlist)
+    print(QUESTIONS)
+    LCV = 0
+    SCORE
+    QUESTION(question_win, LCV, SCORE)
+    LCV = LCV + 1
+
+def Q_LOOP(question_win, LCV, SCORE):
+    if LCV == 3:
+        question_win.destroy()
+        RESULTS(SCORE)
+    else:
+        print(SCORE) 
+        global qlist
+        print(qlist)
+        QUESTIONS[0]
+        qlist = QUESTIONS[0]
+        QUESTIONS.remove(qlist)
+        print(qlist)
+        question_win.destroy()
+        LCV = LCV + 1
+        QUESTION(question_win, LCV, SCORE)
+        
+    
+    
+
+def QUESTION(question_win, LCV, SCORE):
+    #global question_win
+    #question_win.destroy()
+    question_win = Tk()
+    
+    question_win.geometry("%dx%d+%d+%d" % (570, 785, 675, 127.5))
+    #question_win.overrideredirect(True)
+    question_win.config(bg="#e69138")
+    question_win.config(cursor="arrow")
+
+    STRVAR = StringVar()
+    
+    ANSWER = StringVar()
+    ANSWER.set("Answer Selector")
+
+    if len(qlist) == 5:
+        OPTIONS = [(qlist[3]), (qlist[4])]
+    else:
+        OPTIONS = [(qlist[3]), (qlist[4]), (qlist[5]), (qlist[6])]
+
+    
+    header2 = Label(question_win, text="Question "+str(LCV+1), bg="#ffe599", padx=85.1962865, font=("Merriweather", 20))
+    header2.place(x=135 ,y=50)
+    questionbox = Canvas(question_win, bg="#ffe599", height=333, width=422)
+    questionbox.place(y=136,x=74)
+    QHEADER = Label(questionbox, text=str(qlist[2]), font=("Merriweather, 20"), wraplength=422, bg="#ffe599")
+    QHEADER.place(relx=0.5, rely=0.5, anchor=CENTER)
+    drop = OptionMenu(question_win, ANSWER, *OPTIONS)
+    drop.config(width=27, font="Merriweather, 19", highlightthickness=4, bg="#f1c232", highlightcolor="#f1c232")
+    drop["menu"].config(bg="#f1c232")
+    drop.place(x=74,y=500)
+    dropbutton = Button(question_win, text="submit", command= lambda:SUBMIT(ANSWER, SCORE, question_win, LCV), bg="#660000",fg="white", font=("merriweather", 20), padx=107.6)
+    dropbutton.place(x=126.5,y=581)
+
+def SUBMIT(ANSWER, SCORE, question_win, LCV):
+    CHECKVALUE = (int(qlist[1]))+2
+    CORRECT_ANS = qlist[CHECKVALUE]
+    if ANSWER.get() == "Answer Selector":
+        messagebox.showerror('Python Error', 'You must select an answer to submit, \nor skip the question if you have skips remaining')
+    else:
+        print(ANSWER.get())
+        print(CORRECT_ANS)
+        if ANSWER.get() == CORRECT_ANS:
+            print(SCORE)
+            SCORE = SCORE + 1
+            print("CORRECT")
+        Q_LOOP(question_win, LCV, SCORE)
+        print("SUBMITED")
+
+def RESULTS(SCORE):
+    print(SCORE)
+    PER_SCORE = (SCORE/10)*100
+    CALC_RESULTS(PER_SCORE)
+    
+
+    RESULTS_WIN = Tk()
+    RESULTS_WIN.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    RESULTS_WIN.overrideredirect(True)
+    RESULTS_WIN.resizable(False,False)
+    RESULTS_WIN.configure(bg="#e69138")
+    RESULTS_WIN.config(cursor="heart")
+    resultsbox = Canvas(RESULTS_WIN, bg="#ffe599", height=333, width=422)
+    resultsbox.place(y=136,x=74)
+    DISPLAYSCORE = Label(resultsbox, text=PER_SCORE).place(x=1,y=1)
+    MESSAGELABEL = Label(resultsbox, text=MSGD).place(x=50,y=10)
+
+def CALC_RESULTS(PER_SCORE):
+    global MSGD
+    MSGD = ""
+    if PER_SCORE < 20:
+        MSGD = MSG1
+    elif PER_SCORE >= 20 and PER_SCORE < 50:
+        MSGD = MSG2
+    elif PER_SCORE >= 50 and PER_SCORE < 70:
+        MSGD = MSG3
+    else:
+        MSGD = MSG4
+    
+RUN_PRG = 1
+while RUN_PRG == 1:
+    print("STARTED")
+    LCV = 1
+    SCORE = 0
+    SKIPS = 0
+    global QUESTION_CTRL
+    QUESTION_CTRL = 0
+    question_win = 1
+    MAIN(question_win)
+    print("DONE")
+    RUN_PRG = 0

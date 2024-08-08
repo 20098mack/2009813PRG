@@ -50,8 +50,8 @@ random.shuffle(QUESTIONS)
 def MAIN(question_win):
     main=Tk()
 
-    main.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
-    #main.overrideredirect(True)
+    main.geometry("%dx%d+%d+%d" % (570, 600, 398, 84))
+    main.overrideredirect(True)
     main.resizable(False,False)
     main.configure(bg="#e69138")
     main.config(cursor="heart")
@@ -81,7 +81,7 @@ def START(main, question_win):
     LCV = LCV + 1
 
 def Q_LOOP(question_win, LCV, SCORE, SKIPS):
-    if LCV == 3:
+    if LCV == 9:
         question_win.destroy()
         RESULTS(SCORE, SKIPS)
     else:
@@ -102,8 +102,8 @@ def QUESTION(question_win, LCV, SCORE, SKIPS):
     #question_win.destroy()
     question_win = Tk()
     
-    question_win.geometry("%dx%d+%d+%d" % (570, 785, 675, 127.5))
-    #question_win.overrideredirect(True)
+    question_win.geometry("%dx%d+%d+%d" % (570, 785, 398, 0))
+    question_win.overrideredirect(True)
     question_win.config(bg="#e69138")
     question_win.config(cursor="arrow")
 
@@ -167,29 +167,33 @@ def RESULTS(SCORE, SKIPS):
     
 
     RESULTS_WIN = Tk()
-    RESULTS_WIN.geometry("%dx%d+%d+%d" % (570, 600, 675, 249))
+    RESULTS_WIN.geometry("%dx%d+%d+%d" % (570, 600, 398, 84))
     RESULTS_WIN.overrideredirect(True)
     RESULTS_WIN.resizable(False,False)
     RESULTS_WIN.configure(bg="#e69138")
     RESULTS_WIN.config(cursor="heart")
     #header = Label(RESULTS_WIN, text="Results, bg="ffe599", padx=85.1962865, font=("Merriweather", 20))
-    header = Label(RESULTS_WIN, text="Results", bg="#ffe599", font=("Merriweather", 20), padx=85)
+    header = Label(RESULTS_WIN, text="Results", bg="#ffe599", font=("Merriweather", 20), padx=97)
     header.place(x=135 ,y=30)
     resultsbox = Canvas(RESULTS_WIN, bg="#ffe599", height=333, width=422)
-    resultsbox.place(y=136,x=74)
-    DISPLAYSCORE = Label(resultsbox, text="Score: "+str(int(PER_SCORE))+"%", font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=100, anchor=CENTER)
+    resultsbox.place(y=86,x=64)
+    DISPLAYSCORE = Label(resultsbox, text="Score: "+str(int(PER_SCORE))+"%", font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=50, anchor=CENTER)
     print(MSGD)
-    MESSAGELABEL = Label(resultsbox, text=MSGD, font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=200, anchor=CENTER)
-    MESSAGELABEL = Label(resultsbox, text="Questions Skipped: "+str(SKIPS), font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=300, anchor=CENTER)
-    exitbutton = Button(RESULTS_WIN, text="Exit", command= lambda: QUIT_PRO(PER_SCORE, SCORE, SKIPS), bg="#660000",fg="white", font=("merriweather", 20), padx=122.6)
-    exitbutton.place(x=126.5,y=550)
+    MESSAGELABEL = Label(resultsbox, text=MSGD, font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=150, anchor=CENTER)
+    MESSAGELABEL = Label(resultsbox, text="Questions Skipped: "+str(SKIPS), font=("Merriweather, 20"), wraplength=422, bg="#ffe599").place(relx=0.5, y=250, anchor=CENTER)
+    exitbutton = Button(RESULTS_WIN, text="Exit", command= lambda: QUIT_PRO(PER_SCORE, SCORE, SKIPS, RESULTS_WIN), bg="#660000",fg="white", font=("merriweather", 20), padx=122.6)
+    exitbutton.place(relx=0.5,y=470, anchor=CENTER)
+    redobutton = Button(RESULTS_WIN, text="Try Again", command= lambda: RESTART(RESULTS_WIN), bg="#660000",fg="white", font=("merriweather", 20), padx=107.6)
+    redobutton.place(relx=0.5,y=540, anchor=CENTER)
 
-def QUIT_PRO(PER_SCORE, SCORE, SKIPS):
+
+def QUIT_PRO(PER_SCORE, SCORE, SKIPS, RESULTS_WIN):
+    RESULTS_WIN.destroy()
     with open("QUIZ_RESULTS.txt", "a") as file:
         # Writes the the cards details into file, new info on each line, eahc card as blank line in between
         file.write("Score=" + str(SCORE) + "/10" + "\n")
-    os.startfile("cards.txt") # Open "cards.txt" in the defult text editor using os.startfile()    
-    quit
+    os.startfile("QUIZ_RESULTS.txt") # Open "cards.txt" in the defult text editor using os.startfile()    
+    quit()
 
 def FILE(CORRECT_ANS,LCV, ANSWER):
     with open("QUIZ_RESULTS.txt", "a") as file:
@@ -209,11 +213,19 @@ def CALC_RESULTS(PER_SCORE):
         MSGD = MSG3
     else:
         MSGD = MSG4
-    
+
+
+def RESTART(RESULTS_WIN):
+    RESULTS_WIN.destroy()
+    global RUN_PRG
+    RUN_PRG = 1
+    SCORE = 0
+
 RUN_PRG = 1
 while RUN_PRG == 1:
+    RUN_PRG = 0
     print("STARTED")
-    LCV = 1
+    LCV = 0
     SCORE = 0
     SKIPS = 0
     global QUESTION_CTRL
@@ -221,4 +233,3 @@ while RUN_PRG == 1:
     question_win = 1
     MAIN(question_win)
     print("DONE")
-    RUN_PRG = 0

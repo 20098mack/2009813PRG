@@ -1,0 +1,204 @@
+from tkinter import *
+from tkinter import messagebox
+import random
+import pyglet
+import os
+
+# Initialize a global score variable and default messages for feedback.
+global SCORE
+SCORE = 0
+
+MSGD = ""
+# Different messages for feedback based on the player's score.
+MSG1 = "Hard luck, better luck next time"
+MSG2 = "Half way there! just a little more study"
+MSG3 = "So close, maybe next time."
+MSG4 = "AMAZING🎉"
+
+# List of questions in the format: [id, correct answer index, question, option1, option2, option3, option4]
+# The list includes both multiple-choice and true/false questions.
+QUESTIONS = [
+    # ...
+]
+
+x = 0
+y = 0
+
+# Shuffle the order of the questions to randomize the quiz.
+random.shuffle(QUESTIONS)
+
+# The MAIN function is responsible for displaying the initial screen of the quiz.
+# It creates the main window, which contains an introduction to the quiz and a button to start.
+def MAIN(question_win):
+    main = Tk()
+
+    # Sets the size and position of the window, disables resizing, and sets the background color.
+    main.geometry("%dx%d+%d+%d" % (570, 600, 398, 84))
+    main.resizable(False, False)
+    main.configure(bg="#e69138")
+    main.config(cursor="heart")
+
+    # Adds a label to display the quiz title.
+    header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
+    header1.place(x=135, y=50)
+
+    # Adds a label with an introduction to the quiz rules and structure.
+    introduction = Label(main, bg="#ffe599", font=("Merriweather", 27), text="This quiz is about \n science. There are ten \n questions including \n multi-choice and \n true/false questions.\n You will have three \n opportunities to skip \n questions if you wish.")
+    introduction.place(x=95.5, y=138)
+
+    # Adds a button to start the quiz.
+    BEGIN = Button(main, text="Begin", bg="#660000", fg="white", command=lambda: START(main, question_win), font=("Merriweather", 20), padx=112.849426)
+    BEGIN.place(x=126.5, y=521)
+
+    main.mainloop()
+
+# START function is triggered when the user clicks the "Begin" button.
+# It initializes the first question, destroys the intro window, and passes control to the QUESTION function.
+def START(main, question_win):
+    main.destroy()
+    global qlist
+    LCV = 0  # Loop Control Variable to track current question number.
+    qlist = QUESTIONS[LCV]
+    SCORE
+    LCV += 1
+    QUESTION(question_win, LCV, SCORE, SKIPS)
+
+# Q_LOOP function is responsible for transitioning between questions.
+# If all questions are answered, it calls the RESULTS function; otherwise, it moves to the next question.
+def Q_LOOP(question_win, LCV, SCORE, SKIPS):
+    if LCV == 9:  # End the quiz after 9 questions.
+        question_win.destroy()
+        RESULTS(SCORE, SKIPS)
+    else:
+        global qlist
+        qlist = QUESTIONS[LCV]
+        question_win.destroy()
+        LCV += 1
+        QUESTION(question_win, LCV, SCORE, SKIPS)
+
+# QUESTION function displays each question and provides the interface for the user to answer.
+# It sets up the question window, displays the question and answer options, and includes submit and skip buttons.
+def QUESTION(question_win, LCV, SCORE, SKIPS):
+    question_win = Tk()
+    
+    question_win.geometry("%dx%d+%d+%d" % (570, 785, 398, 0))
+    question_win.config(bg="#e69138")
+    question_win.config(cursor="arrow")
+
+    STRVAR = StringVar()
+    ANSWER = StringVar()
+    ANSWER.set("Answer Selector")  # Default answer option.
+
+    # Create answer options depending on whether it's a true/false or multiple-choice question.
+    if len(qlist) == 5:
+        OPTIONS = [(qlist[3]), (qlist[4])]  # True/False questions.
+    else:
+        OPTIONS = [(qlist[3]), (qlist[4]), (qlist[5]), (qlist[6])]  # Multiple-choice questions.
+
+    # Display the current question.
+    header2 = Label(question_win, text="Question " + str(LCV), bg="#ffe599", padx=85.1962865, font=("Merriweather", 20))
+    header2.place(x=135, y=30)
+    
+    # Question display box with the text of the question.
+    questionbox = Canvas(question_win, bg="#ffe599", height=333, width=422)
+    questionbox.place(y=86, x=74)
+    QHEADER = Label(questionbox, text=str(qlist[2]), font=("Merriweather, 20"), wraplength=422, bg="#ffe599")
+    QHEADER.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    # Dropdown for selecting the answer.
+    drop = OptionMenu(question_win, ANSWER, *OPTIONS)
+    drop.config(width=27, font="Merriweather, 19", highlightthickness=4, bg="#f1c232", highlightcolor="#f1c232")
+    drop["menu"].config(bg="#f1c232", font="Merriweather, 19")
+    drop.place(x=74, y=450)
+
+    # Button to submit the selected answer.
+    dropbutton = Button(question_win, text="submit", command=lambda: SUBMIT(ANSWER, SCORE, question_win, LCV, SKIPS), bg="#660000", fg="white", font=("merriweather", 20), padx=107.6)
+    dropbutton.place(x=126.5, y=531)
+
+    # Button to skip the current question.
+    skipbutton = Button(question_win, text="skip", command=lambda: SKIP(SCORE, question_win, LCV, ANSWER, SKIPS), bg="#660000", fg="white", font=("merriweather", 20), padx=122.6)
+    skipbutton.place(x=126.5, y=600)
+
+# SKIP function handles the logic when a user skips a question.
+# It allows up to 3 skips and writes the skipped question to a results file.
+def SKIP(SCORE, question_win, LCV, ANSWER, SKIPS):
+    if SKIPS == 3:
+        messagebox.showerror('Python Error', 'You have already skipped 3 times, answer the rest of the questions.')
+    else:
+        SKIPS += 1
+        Q_LOOP(question_win, LCV, SCORE, SKIPS)
+        with open("QUIZ_RESULTS.txt", "a") as file:
+            file.write("Question=" + str(QUESTIONS[LCV][2]) + "/10" + "\n")
+            file.write("Question Skipped" + "\n\n")
+
+# SUBMIT function handles the answer submission and scoring.
+# It checks if the selected answer matches the correct one and writes the result to a file.
+def SUBMIT(ANSWER, SCORE, question_win, LCV, SKIPS):
+    CHECKVALUE = (int(qlist[1])) + 2  # Calculate the index of the correct answer.
+    CORRECT_ANS = qlist[CHECKVALUE]
+    if ANSWER.get() == "Answer Selector":
+        messagebox.showerror('Python Error', 'You must select an answer to submit, \nor skip the question if you have skips remaining')
+    else:
+        if ANSWER.get() == CORRECT_ANS:
+            SCORE += 1
+        FILE(CORRECT_ANS, LCV, ANSWER)  # Log the result.
+        Q_LOOP(question_win, LCV, SCORE, SKIPS)
+
+# RESULTS function calculates the final score and displays a summary screen.
+# It uses a message based on the score and provides options to exit or retry.
+def RESULTS(SCORE, SKIPS):
+    PER_SCORE = (SCORE / 10) * 100  # Convert score to percentage.
+    CALC_RESULTS(PER_SCORE)  # Determine the feedback message based on the score.
+    
+    RESULTS_WIN = Tk()
+    RESULTS_WIN.geometry("%dx%d+%d+%d" % (570, 600, 398, 84))
+    RESULTS_WIN.overrideredirect(True)
+    RESULTS_WIN.resizable(False, False)
+    RESULTS_WIN.configure(bg="#e69138")
+    RESULTS_WIN.config(cursor="heart")
+    
+    # Displays the score and messages.
+    header = Label(RESULTS_WIN, text="Results", bg="#ffe599", font=("Merriweather", 20), padx=97)
+    header.place(x=135, y=30)
+    resultsbox = Canvas(RESULTS_WIN, bg="#ffe599", height=333, width=422)
+    resultsbox.place(y=86, x=64)
+    Label(resultsbox, text="Score: " + str(int(PER_SCORE)) + "%", font=("Merriweather, 20"), bg="#ffe599").place(relx=0.5, y=50, anchor=CENTER)
+    Label(resultsbox, text=MSGD, font=("Merriweather, 20"), bg="#ffe599").place(relx=0.5, y=150, anchor=CENTER)
+    Label(resultsbox, text=f"You skipped {SKIPS}/3 questions", font=("Merriweather, 20"), bg="#ffe599").place(relx=0.5, y=250, anchor=CENTER)
+
+    # Retry and exit buttons.
+    retry_button = Button(RESULTS_WIN, text="Retry", command=lambda: RETRY(RESULTS_WIN), bg="#660000", fg="white", font=("Merriweather", 20), padx=107.6)
+    retry_button.place(x=126.5, y=531)
+    exit_button = Button(RESULTS_WIN, text="Exit", command=RESULTS_WIN.destroy, bg="#660000", fg="white", font=("Merriweather", 20), padx=122.6)
+    exit_button.place(x=126.5, y=600)
+
+# RETRY function allows the player to restart the quiz.
+def RETRY(RESULTS_WIN):
+    RESULTS_WIN.destroy()
+    random.shuffle(QUESTIONS)
+    question_win = None
+    MAIN(question_win)
+
+# FILE function writes the answer details to the quiz results file.
+def FILE(CORRECT_ANS, LCV, ANSWER):
+    with open("QUIZ_RESULTS.txt", "a") as file:
+        file.write("Question=" + str(qlist[2]) + "/10" + "\n")
+        file.write("Correct Answer=" + str(CORRECT_ANS) + "\n")
+        file.write("Answer Selected=" + str(ANSWER.get()) + "\n\n")
+
+# CALC_RESULTS function assigns feedback messages based on the score percentage.
+def CALC_RESULTS(PER_SCORE):
+    global MSGD
+    if PER_SCORE <= 30:
+        MSGD = MSG1
+    elif PER_SCORE <= 60:
+        MSGD = MSG2
+    elif PER_SCORE <= 99:
+        MSGD = MSG3
+    else:
+        MSGD = MSG4
+
+if __name__ == "__main__":
+    question_win = None
+    SKIPS = 0
+    MAIN(question_win)

@@ -1,3 +1,4 @@
+#import required library
 from tkinter import *
 from tkinter import messagebox
 import random
@@ -7,15 +8,24 @@ import os
 #pyglet.font.add_file('Merriweather-Italic.ttf')
 #pyglet.font.add_file("Pacifico.ttf")
 
+# Initialize a global score variable and default messages for feedback.
 global SCORE
 SCORE = 0
 
+# Different messages for feedback based on the player's score.
 MSGD = ""
 MSG1 = "Hard luck, better luck next time"
 MSG2 = "Half way there! just a little more study"
 MSG3 = "So close, maybe next time."
 MSG4 = "AMAZING🎉"
 
+#Sets constants for when each message is displated
+PER1 = 20
+PER2 = 50
+PER3 = 70
+
+# List of questions in the format: [id, correct answer index, question, option1, option2, option3, option4]
+# The list includes both multiple-choice and true/false questions.
 QUESTIONS = [
     [1,1,"How many active volcanoes are on land","1500","10000","140000","6400"],
     [2,2,"You can see arteries through the skin", "True", "False"],
@@ -42,36 +52,44 @@ QUESTIONS = [
 ]
 
 
-x=0
-y=0
 
+# Shuffle the order of the questions to randomize the quiz.
 random.shuffle(QUESTIONS)
 
+# The MAIN function is responsible for displaying the initial screen of the quiz.
+# It creates the main window, which contains an introduction to the quiz and a button to start
 def MAIN(question_win):
     main=Tk()
 
+    # Sets the size and position of the window, disables resizing, and sets the background color.
     main.geometry("%dx%d+%d+%d" % (570, 600, 398, 84))
     #main.overrideredirect(True)
     main.resizable(False,False)
     main.configure(bg="#e69138")
     main.config(cursor="heart")
     
+    # Adds a label to display the quiz title.
     header1 = Label(main, text="Science Quiz", bg="#ffe599", padx=67.3076923, font=("Merriweather", 20))
     header1.place(x=135 ,y=50)
 
+    # Adds a label with an introduction to the quiz rules and structu
     introduction = Label(main,bg="#ffe599",font=("Merriweather", 27), text=
      "This quiz is about \n science. There are ten \n questions inlcuding \n multi choice and \n true/false questions.\n You will have three \n opurtunities to skip \n questions if you wish.")
     introduction.place(x=95.5,y=138)
 
+    # Adds a button to start the quiz.
     BEGIN = Button(main, text="Begin", bg="#660000",fg="white", command= lambda:START(main, question_win), font=("Merriweather", 20), padx=112.849426)
     BEGIN.place(x=126.5,y=521)
 
+    #initialises main loop for tkinter
     main.mainloop()
 
+# START function is triggered when the user clicks the "Begin" button.
+# It initializes the first question, destroys the intro window, and passes control to the QUESTION function.
 def START(main, question_win):
     main.destroy()
     global qlist
-    LCV = 0
+    LCV = 0     # Loop Control Variable to track current question number.
     qlist = QUESTIONS[LCV]
     print(qlist)
     print(QUESTIONS)
@@ -80,8 +98,10 @@ def START(main, question_win):
     LCV = LCV + 1
     QUESTION(question_win, LCV, SCORE, SKIPS)
 
+# Q_LOOP function is responsible for transitioning between questions.
+# If all questions are answered, it calls the RESULTS function; otherwise, it moves to the next question.
 def Q_LOOP(question_win, LCV, SCORE, SKIPS):
-    if LCV == 10:
+    if LCV == 10:       # End the quiz after 10 questions.
         question_win.destroy()
         RESULTS(SCORE, SKIPS)
     else:
@@ -95,7 +115,8 @@ def Q_LOOP(question_win, LCV, SCORE, SKIPS):
         
     
     
-
+#QUESTION function displays each question and provides the interface for the user to answer.
+# It sets up the question window, displays the question and answer options, and includes submit and skip buttons.
 def QUESTION(question_win, LCV, SCORE, SKIPS):
     #global question_win
     #question_win.destroy()
@@ -109,7 +130,7 @@ def QUESTION(question_win, LCV, SCORE, SKIPS):
     STRVAR = StringVar()
     
     ANSWER = StringVar()
-    ANSWER.set("Answer Selector")
+    ANSWER.set("Answer Selector")   # Default answer option.
 
     if len(qlist) == 5:
         OPTIONS = [(qlist[3]), (qlist[4])]
